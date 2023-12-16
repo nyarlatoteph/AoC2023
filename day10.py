@@ -60,9 +60,40 @@ def distance_map(map: [[str]], start: tuple):
 
     return dm
 
-def flood_fill(dm):
-    fm = [['.' if x is None else 'x' for x in l] for l in dm]
+def flood_fill(fm, dm, positions):
+    while len(positions) > 0:
+        x,y = positions[0]
+        positions = positions[1:]
+
+        if fm[y][x] != ' ':
+            continue
+    
+        fm[y][x] = 'O'
+
+        if x > 0: 
+            positions += [(x-1, y)]
+        if x < len(fm[0])-1:
+            positions += [(x+1, y)]
+        if y > 0:
+            positions += [(x, y-1)]
+        if y < len(fm)-1:
+            positions += [(x, y+1)]
+
     return fm
+
+def flood_map(dm, map):
+    fm = [[None for x in l + l] for l in dm + dm]
+    for y,l in enumerate(map):
+        for x,e in enumerate(l):
+            fm[y*2][x*2] = e if dm[y][x] is not None else ' '
+            fm[y*2][x*2+1] = '-' if x < len(l)-1 and dm[y][x] is not None and connected(map, x, y, x+1, y) else ' '
+            fm[y*2+1][x*2] = '|' if y < len(map)-1 and dm[y][x] is not None and connected(map, x, y, x, y+1) else ' '
+            fm[y*2+1][x*2+1] = ' '
+
+    return fm
+
+def reduce_map(fm, dm):
+    return [[fm[y*2][x*2] for x,e in enumerate(l)] for y,l in enumerate(dm)]
 
 # ---------------------------------------------------------------
 
@@ -74,7 +105,7 @@ start = find_start(p)
 dm = distance_map(map, start)
 
 # print("\n".join(["".join(y) for y in map]), "\n")
-# print("\n".join(["".join(['.' if x is None else chr(x+ord('0')) for x in y]) for y in dm]))
+# print("\n".join(["".join([' ' if x is None else chr(x+ord('0')) for x in y]) for y in dm]))
 print(max([f for f in flatten(dm) if f is not None]))
 
 
@@ -84,8 +115,15 @@ p = AoCPuzzle('day10.txt')
 map = [list(l.strip()) for l in p.lines]
 start = find_start(p)
 dm = distance_map(map, start)
-fm = flood_fill(dm)
+fm = flood_map(dm, map)
 
-print("\n".join(["".join(y) for y in map]), "\n")
-# print("\n".join(["".join(['.' if x is None else chr(x+ord('0')) for x in y]) for y in dm]), "\n")
+# print("\n".join(["".join(y) for y in map]), "\n")
+print("\n".join(["".join([' ' if x is None else chr((x%16)+ord('0')) for x in y]) for y in dm]), "\n")
 print("\n".join(["".join(y) for y in fm]), "\n")
+
+fm = flood_fill(fm, dm, [(0, 0), (0, len(fm)-1), (len(fm[0])-1, 0), (len(fm[0])-1, len(fm)-1)])
+print("\n".join(["".join(y) for y in fm]), "\n")
+fm = reduce_map(fm, dm)
+
+print("\n".join(["".join(y) for y in fm]), "\n")
+print(len([i for i in flatten(fm) if i == ' ']))
