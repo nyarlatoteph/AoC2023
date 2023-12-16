@@ -12,7 +12,7 @@ def find_start(p: AoCPuzzle):
 def connected(map, x1, y1, x2, y2):
     a = map[y1][x1]
     b = map[y2][x2]
-    return (a in ['|', 'S'] and b == '|' and x1 == x2) or \
+    return (a in ['|', 'S'] and b in ['|', 'S'] and x1 == x2) or \
         (a in ['|', 'S', '7', 'F'] and b == 'L' and y1 < y2) or \
         (b in ['|', 'S', '7', 'F'] and a == 'L' and y1 > y2) or \
         (a in ['|', 'S', '7', 'F'] and b == 'J' and y1 < y2) or \
@@ -21,7 +21,7 @@ def connected(map, x1, y1, x2, y2):
         (b in ['|', 'S', 'L', 'J'] and a == 'F' and y1 < y2) or \
         (a in ['|', 'S', 'L', 'J'] and b == '7' and y1 > y2) or \
         (b in ['|', 'S', 'L', 'J'] and a == '7' and y1 < y2) or \
-        (a in ['-', 'S'] and b == '-' and y1 == y2) or \
+        (a in ['-', 'S'] and b in ['-', 'S'] and y1 == y2) or \
         (a in ['-', 'S', 'J', '7'] and b == 'L' and x1 > x2) or \
         (b in ['-', 'S', 'J', '7'] and a == 'L' and x1 < x2) or \
         (a in ['-', 'S', 'L', 'F'] and b == 'J' and x1 < x2) or \
